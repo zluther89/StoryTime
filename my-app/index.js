@@ -13,23 +13,23 @@ app.get("/test", (req, res) => {
 
 let i = 0;
 let animals = ["dog", "cat", "penguin", "emu", "walrus", "elephant"];
-let store = "";
+let story = "";
 
 //Socket methods
 io.on("connection", (socket) => {
   socket.on("addSentence", (sentence) => {
-    console.log(sentence);
+    story += sentence;
+    pushStory();
   });
 
-  console.log("socket id", socket.id);
   setInterval(() => testFunc(socket), 2000);
   setInterval(() => pushAnimal(socket), 2000);
-  socket.on("disconnect", () => {
-    console.log("someone done left");
-  });
+  socket.on("disconnect", () => {});
 });
 
-io.on;
+const pushStory = () => {
+  io.emit("story", story);
+};
 
 const pushAnimal = (socket) => {
   i = (i + animals.length - 1) % animals.length;
