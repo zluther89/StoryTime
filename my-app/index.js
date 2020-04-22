@@ -7,26 +7,42 @@ const io = require("socket.io")(http);
 
 app.use(bodyParser());
 
-app.get("/", (req, res) => {
-  res.send("<h1>HEY JEFF,</h1>");
+app.get("/test", (req, res) => {
+  res.send("<h1>HEY JEFF</h1>");
 });
 
+let i = 0;
+let animals = ["dog", "cat", "penguin", "emu", "walrus", "elephant"];
+let store = "";
+
+//Socket methods
 io.on("connection", (socket) => {
-  console.log("NEW USER BITCH");
-  testFunc(socket);
+  socket.on("addSentence", (sentence) => {
+    console.log(sentence);
+  });
+
+  console.log("socket id", socket.id);
+  setInterval(() => testFunc(socket), 2000);
+  setInterval(() => pushAnimal(socket), 2000);
   socket.on("disconnect", () => {
     console.log("someone done left");
   });
 });
 
-// app.use(express.statoc(path.join(__dirname, " ../build")));
+io.on;
+
+const pushAnimal = (socket) => {
+  i = (i + animals.length - 1) % animals.length;
+  let animal = animals[i];
+  socket.emit("animal", animal);
+};
 
 const testFunc = (socket) => {
   const response = new Date();
-  // Emitting a new message. Will be consumed by the client
   socket.emit("test", response);
 };
 
+// app.use(express.statoc(path.join(__dirname, " ../build")));
 http.listen(PORT, (err) => {
   if (err) console.log(err);
   else console.log("Listening on port: ", PORT);
