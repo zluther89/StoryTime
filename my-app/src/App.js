@@ -15,6 +15,10 @@ function App() {
     socket.on("animal", (animal) => setAnimal(animal));
   });
 
+  const deleteStory = () => {
+    socket.emit("deleteStory");
+  };
+
   const postSentence = () => {
     socket.emit("addSentence", sentence);
   };
@@ -26,6 +30,7 @@ function App() {
       <h2>This is an animal:{animal}</h2>
       <input onChange={(e) => setSentence(e.target.value)}></input>
       <button onClick={postSentence}>Submit Sentence</button>
+      <button onClick={deleteStory}>Start a new story</button>
     </div>
   );
 }

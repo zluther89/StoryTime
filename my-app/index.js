@@ -21,7 +21,10 @@ io.on("connection", (socket) => {
     story += sentence;
     pushStory();
   });
-
+  socket.on("deleteStory", () => {
+    story = "";
+    pushStory();
+  });
   setInterval(() => testFunc(socket), 2000);
   setInterval(() => pushAnimal(socket), 2000);
   socket.on("disconnect", () => {});
