@@ -20,7 +20,6 @@ function App() {
   };
 
   const postSentence = () => {
-    console.log(formRef);
     socket.emit("addSentence", sentence);
     setSentence("");
   };
