@@ -4,11 +4,13 @@ import { socket } from "./socket";
 const Form = (props) => {
   const [sentence, setSentence] = useState("");
   const [storyState, setStoryState] = useState(false);
+  const [incSentence, setIncSent] = useState("");
 
   useEffect(() => {
     socket.on("start game", () => {
       setStoryState(true);
     });
+    socket.on("recieveSentence", (sentence) => setIncSent(sentence));
   });
 
   const startNewStory = () => {
@@ -33,26 +35,42 @@ const Form = (props) => {
   return (
     <div className="container">
       <div className="field">
-        <label>Please Add your sentence</label>
-        <input
+        <label>{incSentence || "Please wait for a sentence"}</label>
+        {incSentence ? (
+          <input
+            name="sentence"
+            value={sentence}
+            className="input is-small"
+            onChange={(e) => setSentence(e.target.value)}
+          ></input>
+        ) : (
+          <input
+            name="sentence"
+            value={sentence}
+            className="input is-small"
+            onChange={(e) => setSentence(e.target.value)}
+            disabled
+          ></input>
+        )}
+        {/* <input
           name="sentence"
           value={sentence}
           className="input is-small"
           onChange={(e) => setSentence(e.target.value)}
-        ></input>
+        ></input> */}
       </div>
       <div className="field">
         <p class="control">
-          <button className="button is-primary" onClick={postSentence}>
+          <button className="button is-info" onClick={postSentence}>
             Submit Sentence
           </button>
         </p>
       </div>
       <div className="buttons">
-        <button className="button is-primary" onClick={startNewStory}>
+        <button className="button is-warning" onClick={startNewStory}>
           Start a new story
         </button>
-        <button className="button is-primary" onClick={showStory}>
+        <button className="button is-success" onClick={showStory}>
           Show Story
         </button>
       </div>
