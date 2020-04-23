@@ -15,8 +15,17 @@ function App() {
     socket.on("animal", (animal) => setAnimal(animal));
   });
 
+  const deleteStory = () => {
+    socket.emit("deleteStory");
+  };
+
   const postSentence = () => {
     socket.emit("addSentence", sentence);
+    setSentence("");
+  };
+
+  const showStory = () => {
+    socket.emit("showStory");
   };
 
   return (
@@ -24,8 +33,16 @@ function App() {
       <h1>Story Time!</h1>
       <div>{story}</div>
       <h2>This is an animal:{animal}</h2>
-      <input onChange={(e) => setSentence(e.target.value)}></input>
-      <button onClick={postSentence}>Submit Sentence</button>
+      <div>
+        <input
+          name="sentence"
+          value={sentence}
+          onChange={(e) => setSentence(e.target.value)}
+        ></input>
+        <button onClick={postSentence}>Submit Sentence</button>
+        <button onClick={deleteStory}>Start a new story</button>
+        <button onClick={showStory}>Show Story</button>
+      </div>
     </div>
   );
 }

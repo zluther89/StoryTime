@@ -18,11 +18,16 @@ let story = "";
 //Socket methods
 io.on("connection", (socket) => {
   socket.on("addSentence", (sentence) => {
+    //refactor to have sentences emited to every other user with
     story += sentence;
-    pushStory();
   });
 
-  setInterval(() => testFunc(socket), 2000);
+  socket.on("showStory", pushStory);
+
+  socket.on("deleteStory", () => {
+    story = "";
+    pushStory();
+  });
   setInterval(() => pushAnimal(socket), 2000);
   socket.on("disconnect", () => {});
 });
@@ -35,11 +40,6 @@ const pushAnimal = (socket) => {
   i = (i + animals.length - 1) % animals.length;
   let animal = animals[i];
   socket.emit("animal", animal);
-};
-
-const testFunc = (socket) => {
-  const response = new Date();
-  socket.emit("test", response);
 };
 
 // app.use(express.statoc(path.join(__dirname, " ../build")));
