@@ -3,24 +3,22 @@ import { socket } from "./socket";
 
 const Form = (props) => {
   const [sentence, setSentence] = useState("");
-  const [storyState, setStoryState] = useState(false);
   const [incSentence, setIncSent] = useState("");
   const [showStoryButton, setStoryButton] = useState(false);
-
-  useEffect(() => {
-    socket.on("start game", () => {
-      setStoryState(true);
-    });
-    socket.on("recieveSentence", (sentence) => setIncSent(sentence));
-    socket.on("enableShowStory", () => setStoryButton(true));
-  });
+  const [timeoutWarning, setTimeoutWarning] = useState("");
+  const [counter, setCount] = useState(0);
 
   const startNewStory = () => {
     socket.emit("start game");
     socket.emit("deleteStory");
   };
 
-  const postSentence = () => {
+  const postSentence = (type) => {
+    if (type === "timeout") {
+      socket.emit("addSentence", "");
+      setSentence("");
+      return;
+    }
     socket.emit("addSentence", sentence);
     setSentence("");
   };
@@ -29,10 +27,26 @@ const Form = (props) => {
     socket.emit("showStory");
   };
 
-  const startGame = () => {
-    socket.emit("start game");
-    socket.emit("deleteStory");
+  const clearSentence = () => {
+    setIncSent("");
   };
+
+  useEffect(() => {
+    socket.on("recieveSentence", (sentence) => {
+      console.log("here");
+      setIncSent(sentence);
+      setTimeout(() => {
+        postSentence("timeout");
+        console.log("here");
+      }, 15000);
+    });
+    socket.on("clearSentence", clearSentence);
+    socket.on("enableShowStory", () => setStoryButton(true));
+    socket.on("timer", (time) => {
+      setCount(time);
+      console.log(counter);
+    });
+  });
 
   return (
     <div className="container">
@@ -54,12 +68,6 @@ const Form = (props) => {
             disabled
           ></input>
         )}
-        {/* <input
-          name="sentence"
-          value={sentence}
-          className="input is-small"
-          onChange={(e) => setSentence(e.target.value)}
-        ></input> */}
       </div>
       <div className="field">
         <p class="control">
@@ -78,9 +86,6 @@ const Form = (props) => {
           </button>
         ) : null}
       </div>
-      {/* {storyState === false ? (
-        <button onClick={startGame}>Start the game</button>
-      ) : null} */}
     </div>
   );
 };

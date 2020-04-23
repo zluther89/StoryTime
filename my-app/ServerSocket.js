@@ -22,10 +22,10 @@ module.exports.onConnect = (socket, io) => {
   };
 
   const cleanSentence = (sentence) => {
+    if (sentence === "") return;
     while (sentence[sentence.length - 1] === " ") {
       sentence = sentence.slice(0, sentence.length - 1);
     }
-    console.log(sentence[sentence.length - 1] === ".");
     if (
       sentence[sentence.length - 1] !== "." &&
       sentence[sentence.length - 1] !== "?" &&
@@ -52,9 +52,14 @@ module.exports.onConnect = (socket, io) => {
   //user add sentence
   socket.on("addSentence", (sentence) => {
     sentence = cleanSentence(sentence);
-    story += sentence + " ";
-    socket.emit("recieveSentence", "");
-    sentenceCount += 1;
+    if (sentence !== "") {
+      story += sentence + " ";
+      sentenceCount += 1;
+    }
+    if (sentence === "") {
+      sentence = "please enter a sentence";
+    }
+    socket.emit("clearSentence");
     emitSentence(sentence);
     enableStoryButton();
   });
