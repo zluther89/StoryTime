@@ -1,26 +1,33 @@
 let i = 0;
-let animals = ["dog", "cat", "penguin", "emu", "walrus", "elephant"];
 let story = "";
 let users = {};
+let userKeys;
 
 module.exports.onConnect = (socket, io) => {
   const pushStory = () => {
     io.emit("story", story);
   };
 
-  const pushAnimal = (socket) => {
-    i = (i + animals.length - 1) % animals.length;
-    let animal = animals[i];
-    socket.emit("animal", animal);
+  const emitSentence = (sentence) => {
+    i = (i + userKeys.length - 1) % userKeys.length;
+    let userKey = userKeys[i];
+    users[userKey].emit("recieveSentence", sentence);
   };
 
   console.log(socket.id);
   users[socket.id] = socket;
-  console.log("users", Object.keys(users));
+  userKeys = Object.keys(users);
+  console.log("users", userKeys);
 
+  socket.on("start game", () => {
+    users[userKeys[0]].emit("recieveSentence", "Please start the story!");
+    io.emit("start game");
+  });
   //user add sentence
   socket.on("addSentence", (sentence) => {
     story += sentence;
+    socket.emit("recieveSentence", "");
+    emitSentence(sentence);
   });
 
   //show story for all users
@@ -32,12 +39,10 @@ module.exports.onConnect = (socket, io) => {
     pushStory();
   });
 
-  //just for fun
-  setInterval(() => pushAnimal(socket), 2000);
-
   //user diconnects
   socket.on("disconnect", () => {
     delete users[socket.id];
+    userKeys = Object.keys(users);
     console.log("users after logout", Object.keys(users));
   });
 };

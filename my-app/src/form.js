@@ -3,8 +3,16 @@ import { socket } from "./socket";
 
 const Form = (props) => {
   const [sentence, setSentence] = useState("");
+  const [storyState, setStoryState] = useState(false);
 
-  const deleteStory = () => {
+  useEffect(() => {
+    socket.on("start game", () => {
+      setStoryState(true);
+    });
+  });
+
+  const startNewStory = () => {
+    socket.emit("start game");
     socket.emit("deleteStory");
   };
 
@@ -17,17 +25,40 @@ const Form = (props) => {
     socket.emit("showStory");
   };
 
+  const startGame = () => {
+    socket.emit("start game");
+    socket.emit("deleteStory");
+  };
+
   return (
-    <div>
-      {" "}
-      <input
-        name="sentence"
-        value={sentence}
-        onChange={(e) => setSentence(e.target.value)}
-      ></input>
-      <button onClick={postSentence}>Submit Sentence</button>
-      <button onClick={deleteStory}>Start a new story</button>
-      <button onClick={showStory}>Show Story</button>
+    <div className="container">
+      <div className="field">
+        <label>Please Add your sentence</label>
+        <input
+          name="sentence"
+          value={sentence}
+          className="input is-small"
+          onChange={(e) => setSentence(e.target.value)}
+        ></input>
+      </div>
+      <div className="field">
+        <p class="control">
+          <button className="button is-primary" onClick={postSentence}>
+            Submit Sentence
+          </button>
+        </p>
+      </div>
+      <div className="buttons">
+        <button className="button is-primary" onClick={startNewStory}>
+          Start a new story
+        </button>
+        <button className="button is-primary" onClick={showStory}>
+          Show Story
+        </button>
+      </div>
+      {/* {storyState === false ? (
+        <button onClick={startGame}>Start the game</button>
+      ) : null} */}
     </div>
   );
 };

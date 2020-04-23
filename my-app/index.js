@@ -49,15 +49,15 @@ io.on("connection", (socket) => onConnect(socket, io));
 //   });
 // });
 
-const pushStory = () => {
-  io.emit("story", story);
-};
+// const pushStory = () => {
+//   io.emit("story", story);
+// };
 
-const pushAnimal = (socket) => {
-  i = (i + animals.length - 1) % animals.length;
-  let animal = animals[i];
-  socket.emit("animal", animal);
-};
+// const pushAnimal = (socket) => {
+//   i = (i + animals.length - 1) % animals.length;
+//   let animal = animals[i];
+//   socket.emit("animal", animal);
+// };
 
 app.use(express.static(path.join(__dirname, "./build")));
 
