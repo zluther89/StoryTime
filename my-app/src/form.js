@@ -5,7 +5,6 @@ const Form = (props) => {
   const [sentence, setSentence] = useState("");
   const [incSentence, setIncSent] = useState("");
   const [showStoryButton, setStoryButton] = useState(false);
-  const [timeoutWarning, setTimeoutWarning] = useState("");
   const [counter, setCount] = useState(0);
 
   const startNewStory = () => {
@@ -33,12 +32,7 @@ const Form = (props) => {
 
   useEffect(() => {
     socket.on("recieveSentence", (sentence) => {
-      console.log("here");
       setIncSent(sentence);
-      setTimeout(() => {
-        postSentence("timeout");
-        console.log("here");
-      }, 15000);
     });
     socket.on("clearSentence", clearSentence);
     socket.on("enableShowStory", () => setStoryButton(true));
