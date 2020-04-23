@@ -5,12 +5,14 @@ const Form = (props) => {
   const [sentence, setSentence] = useState("");
   const [storyState, setStoryState] = useState(false);
   const [incSentence, setIncSent] = useState("");
+  const [showStoryButton, setStoryButton] = useState(false);
 
   useEffect(() => {
     socket.on("start game", () => {
       setStoryState(true);
     });
     socket.on("recieveSentence", (sentence) => setIncSent(sentence));
+    socket.on("enableShowStory", () => setStoryButton(true));
   });
 
   const startNewStory = () => {
@@ -70,9 +72,11 @@ const Form = (props) => {
         <button className="button is-warning" onClick={startNewStory}>
           Start a new story
         </button>
-        <button className="button is-success" onClick={showStory}>
-          Show Story
-        </button>
+        {showStoryButton === true ? (
+          <button className="button is-success" onClick={showStory}>
+            Show Story
+          </button>
+        ) : null}
       </div>
       {/* {storyState === false ? (
         <button onClick={startGame}>Start the game</button>
