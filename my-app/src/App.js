@@ -5,7 +5,6 @@ import Form from "./form";
 function App() {
   const [story, setStory] = useState("");
   const [animal, setAnimal] = useState("");
-  // const [sentence, setSentence] = useState("");
 
   useEffect(() => {
     socket.on("story", (data) => {
@@ -14,19 +13,6 @@ function App() {
 
     socket.on("animal", (animal) => setAnimal(animal));
   });
-
-  // const deleteStory = () => {
-  //   socket.emit("deleteStory");
-  // };
-
-  // const postSentence = () => {
-  //   socket.emit("addSentence", sentence);
-  //   setSentence("");
-  // };
-
-  // const showStory = () => {
-  //   socket.emit("showStory");
-  // };
 
   return (
     <div>
