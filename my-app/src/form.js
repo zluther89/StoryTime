@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { socket } from "./socket";
 
+let timer;
+
 const Form = (props) => {
   const [sentence, setSentence] = useState("");
   const [incSentence, setIncSent] = useState("");
@@ -15,16 +17,17 @@ const Form = (props) => {
 
   const startTimeout = () => {
     timerRef.current = true;
-    setTimeout(() => {
+    timer = setTimeout(() => {
       console.log("in settimeout", timerRef.current);
-      if (timerRef.current === true) {
-        socket.emit("timeout");
-      }
-    }, 500000);
+      // if (timerRef.current === true) {
+      socket.emit("timeout");
+      // }
+    }, 15000);
   };
 
   const postSentence = (type) => {
-    timerRef.current = false;
+    // timerRef.current = false;
+    clearTimeout(timer);
     socket.emit("addSentence", sentence);
     setSentence("");
   };

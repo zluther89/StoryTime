@@ -46,9 +46,6 @@ module.exports.onConnect = (socket, io) => {
       story += sentence + " ";
       sentenceCount += 1;
     }
-    if (sentence === "") {
-      sentence = "please enter a sentence";
-    }
     socket.emit("clearSentence");
     emitSentence(sentence);
     enableStoryButton();
