@@ -5,11 +5,12 @@ const Form = (props) => {
   const [sentence, setSentence] = useState("");
   const [incSentence, setIncSent] = useState("");
   const [showStoryButton, setStoryButton] = useState(false);
-  const [counter, setCount] = useState(0);
+  const [timer, setTime] = useState(0);
 
   const startNewStory = () => {
     socket.emit("start game");
     socket.emit("deleteStory");
+    resetTimer();
   };
 
   const postSentence = (type) => {
@@ -30,20 +31,26 @@ const Form = (props) => {
     setIncSent("");
   };
 
+  const resetTimer = () => {
+    socket.emit("resetTimer");
+  };
+
   useEffect(() => {
+    console.log(timer < 15);
     socket.on("recieveSentence", (sentence) => {
+      resetTimer();
       setIncSent(sentence);
     });
     socket.on("clearSentence", clearSentence);
     socket.on("enableShowStory", () => setStoryButton(true));
     socket.on("timer", (time) => {
-      setCount(time);
-      console.log(counter);
+      setTime(time);
     });
   });
 
   return (
     <div className="container">
+      timer={timer}
       <div className="field">
         <label>{incSentence || "Please wait for a sentence"}</label>
         {incSentence ? (

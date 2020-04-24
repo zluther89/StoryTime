@@ -4,10 +4,15 @@ import Form from "./form";
 
 function App() {
   const [story, setStory] = useState("");
+  const [pictureUrl, setPicture] = useState("");
 
   useEffect(() => {
     socket.on("story", (data) => {
       setStory(data);
+    });
+
+    socket.on("picture", (data) => {
+      setPicture(data);
     });
   });
 
@@ -24,8 +29,15 @@ function App() {
       <div className="columns">
         <div className="column is-one-fifth"></div>
         <div className="column">
+          <div className="columns">
+            <div className="column"></div>
+            <div className="column container">
+              <img src={pictureUrl} className="is-centered" />
+            </div>
+            <div className="column"></div>
+          </div>
           <div className="section">
-            <div>{story}</div>
+            <div>{story || "Once upon a time..."}</div>
           </div>
           <div className="section">
             <Form />
