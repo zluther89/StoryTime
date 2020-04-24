@@ -15,6 +15,7 @@ module.exports.onConnect = (socket, io) => {
   const enableStoryButton = () => {
     if (sentenceCount >= 5) {
       io.emit("enableShowStory");
+      io.emit("toggleStoryButton");
     }
   };
 
@@ -34,6 +35,7 @@ module.exports.onConnect = (socket, io) => {
   socket.on("start game", () => {
     users[userKeys[0]].emit("recieveSentence", "Please start the story!");
     io.emit("start game");
+    io.emit("toggleStoryButton");
     setPicture(io);
   });
 

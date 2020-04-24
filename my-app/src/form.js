@@ -5,6 +5,7 @@ const Form = (props) => {
   const [sentence, setSentence] = useState("");
   const [incSentence, setIncSent] = useState("");
   const [showStoryButton, setStoryButton] = useState(false);
+  const [newStoryButton, setNewStoryButton] = useState(true);
   const timerRef = useRef(false);
 
   const startNewStory = () => {
@@ -41,6 +42,7 @@ const Form = (props) => {
       setIncSent(sentence);
       startTimeout();
     });
+    socket.on("toggleStoryButton", setNewStoryButton(!newStoryButton));
     socket.on("clearSentence", clearSentence);
     socket.on("enableShowStory", () => setStoryButton(true));
   }, []);
@@ -54,6 +56,7 @@ const Form = (props) => {
             name="sentence"
             value={sentence}
             className="input is-small"
+            placeholder="You have 15 seconds to add to the story!"
             onChange={(e) => setSentence(e.target.value)}
           ></input>
         ) : (
@@ -74,9 +77,11 @@ const Form = (props) => {
         </p>
       </div>
       <div className="buttons">
-        <button className="button is-warning" onClick={startNewStory}>
-          Start a new story
-        </button>
+        {newStoryButton ? null : (
+          <button className="button is-warning" onClick={startNewStory}>
+            Start a new story
+          </button>
+        )}
         {showStoryButton === true ? (
           <button className="button is-success" onClick={showStory}>
             Show Story
