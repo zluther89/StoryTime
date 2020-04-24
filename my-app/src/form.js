@@ -1,24 +1,31 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { socket } from "./socket";
 
 const Form = (props) => {
   const [sentence, setSentence] = useState("");
   const [incSentence, setIncSent] = useState("");
   const [showStoryButton, setStoryButton] = useState(false);
-  const [timer, setTime] = useState(0);
+  const [timerState, setTimerState] = useState(false);
+  const timerRef = useRef(timerState);
 
   const startNewStory = () => {
     socket.emit("start game");
     socket.emit("deleteStory");
-    resetTimer();
+  };
+
+  const startTimeout = () => {
+    timerRef.current = true;
+    setTimeout(() => {
+      console.log("in settimeout", timerRef.current);
+      if (timerRef.current === true) {
+        socket.emit("timeout");
+      }
+    }, 5000);
   };
 
   const postSentence = (type) => {
-    if (type === "timeout") {
-      socket.emit("addSentence", "");
-      setSentence("");
-      return;
-    }
+    timerRef.current = false;
+    console.log(timerRef.current);
     socket.emit("addSentence", sentence);
     setSentence("");
   };
@@ -31,26 +38,22 @@ const Form = (props) => {
     setIncSent("");
   };
 
-  const resetTimer = () => {
-    socket.emit("resetTimer");
-  };
+  useEffect(() => {
+    console.log("effect timerstate", timerState);
+  }, [timerState]);
 
   useEffect(() => {
-    console.log(timer < 15);
+    console.log("useeffect");
     socket.on("recieveSentence", (sentence) => {
-      resetTimer();
       setIncSent(sentence);
+      startTimeout();
     });
     socket.on("clearSentence", clearSentence);
     socket.on("enableShowStory", () => setStoryButton(true));
-    socket.on("timer", (time) => {
-      setTime(time);
-    });
-  });
+  }, []);
 
   return (
     <div className="container">
-      timer={timer}
       <div className="field">
         <label>{incSentence || "Please wait for a sentence"}</label>
         {incSentence ? (

@@ -1,38 +1,19 @@
-let axios = require("axios");
+const { setPicture, cleanSentence } = require("./helperFuncs");
+
 let i = 0;
 let sentenceCount = 0;
 let story = "";
 let users = {};
 let userKeys;
-let picture = null;
-
-const setPicture = (io) => {
-  axios
-    .get(
-      "https://api.unsplash.com/photos/random?client_id=HX0FWjTsO1PH1Mv3FPaqHwtfDxaz2ac4aglxl-kY3T4"
-    )
-    .then((res) => {
-      picture = res.data.urls.thumb;
-      io.emit("picture", picture);
-    });
-};
-
-let ticker = 0;
-setInterval(() => {
-  ticker += 1;
-}, 1000);
 
 module.exports.onConnect = (socket, io) => {
-  setInterval(() => {
-    io.emit("timer", ticker);
-  }, 1000);
-
+  //
   const pushStory = () => {
     io.emit("story", story);
   };
 
   const enableStoryButton = () => {
-    if (sentenceCount > 5) {
+    if (sentenceCount >= 5) {
       io.emit("enableShowStory");
     }
   };
@@ -43,21 +24,6 @@ module.exports.onConnect = (socket, io) => {
     users[userKey].emit("recieveSentence", sentence);
   };
 
-  const cleanSentence = (sentence) => {
-    if (sentence === "") return;
-    while (sentence[sentence.length - 1] === " ") {
-      sentence = sentence.slice(0, sentence.length - 1);
-    }
-    if (
-      sentence[sentence.length - 1] !== "." &&
-      sentence[sentence.length - 1] !== "?" &&
-      sentence[sentence.length - 1] !== "!"
-    ) {
-      sentence += ".";
-    }
-    return sentence;
-  };
-
   console.log(socket.id);
 
   users[socket.id] = socket;
@@ -66,14 +32,10 @@ module.exports.onConnect = (socket, io) => {
 
   console.log("users", userKeys);
 
-  socket.on("resetTimer", () => {
-    ticker = 0;
-  });
-
   socket.on("start game", () => {
     users[userKeys[0]].emit("recieveSentence", "Please start the story!");
     io.emit("start game");
-    setPicture(io);
+    // setPicture(io);
   });
 
   //user add sentence
@@ -93,6 +55,11 @@ module.exports.onConnect = (socket, io) => {
 
   //show story for all users
   socket.on("showStory", pushStory);
+
+  //timer listener
+  socket.on("timeout", () => {
+    console.log("timeout");
+  });
 
   //delete story
   socket.on("deleteStory", () => {
