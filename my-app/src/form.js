@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import { socket } from "./socket";
 
+let timer;
+
 const Form = (props) => {
   const [sentence, setSentence] = useState("");
   const [incSentence, setIncSent] = useState("");
   const [showStoryButton, setStoryButton] = useState(false);
   const [newStoryButton, setNewStoryButton] = useState(true);
-  const timerRef = useRef(false);
 
   const startNewStory = () => {
     socket.emit("start game");
@@ -14,17 +15,13 @@ const Form = (props) => {
   };
 
   const startTimeout = () => {
-    timerRef.current = true;
-    setTimeout(() => {
-      console.log("in settimeout", timerRef.current);
-      if (timerRef.current === true) {
-        socket.emit("timeout");
-      }
-    }, 500000);
+    timer = setTimeout(() => {
+      socket.emit("timeout");
+    }, 15000);
   };
 
   const postSentence = (type) => {
-    timerRef.current = false;
+    clearTimeout(timer);
     socket.emit("addSentence", sentence);
     setSentence("");
   };
