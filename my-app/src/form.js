@@ -1,23 +1,30 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { socket } from "./socket";
 
 const Form = (props) => {
   const [sentence, setSentence] = useState("");
   const [incSentence, setIncSent] = useState("");
   const [showStoryButton, setStoryButton] = useState(false);
-  const [counter, setCount] = useState(0);
+  const [newStoryButton, setNewStoryButton] = useState(true);
+  const timerRef = useRef(false);
 
   const startNewStory = () => {
     socket.emit("start game");
     socket.emit("deleteStory");
   };
 
+  const startTimeout = () => {
+    timerRef.current = true;
+    setTimeout(() => {
+      console.log("in settimeout", timerRef.current);
+      if (timerRef.current === true) {
+        socket.emit("timeout");
+      }
+    }, 15000);
+  };
+
   const postSentence = (type) => {
-    if (type === "timeout") {
-      socket.emit("addSentence", "");
-      setSentence("");
-      return;
-    }
+    timerRef.current = false;
     socket.emit("addSentence", sentence);
     setSentence("");
   };
@@ -33,14 +40,12 @@ const Form = (props) => {
   useEffect(() => {
     socket.on("recieveSentence", (sentence) => {
       setIncSent(sentence);
+      startTimeout();
     });
+    socket.on("toggleStoryButton", setNewStoryButton(!newStoryButton));
     socket.on("clearSentence", clearSentence);
     socket.on("enableShowStory", () => setStoryButton(true));
-    socket.on("timer", (time) => {
-      setCount(time);
-      console.log(counter);
-    });
-  });
+  }, []);
 
   return (
     <div className="container">
@@ -51,6 +56,7 @@ const Form = (props) => {
             name="sentence"
             value={sentence}
             className="input is-small"
+            placeholder="You have 15 seconds to add to the story!"
             onChange={(e) => setSentence(e.target.value)}
           ></input>
         ) : (
@@ -71,9 +77,11 @@ const Form = (props) => {
         </p>
       </div>
       <div className="buttons">
-        <button className="button is-warning" onClick={startNewStory}>
-          Start a new story
-        </button>
+        {newStoryButton ? null : (
+          <button className="button is-warning" onClick={startNewStory}>
+            Start a new story
+          </button>
+        )}
         {showStoryButton === true ? (
           <button className="button is-success" onClick={showStory}>
             Show Story
