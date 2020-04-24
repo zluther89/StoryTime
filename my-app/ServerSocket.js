@@ -59,6 +59,8 @@ module.exports.onConnect = (socket, io) => {
   //timer listener
   socket.on("timeout", () => {
     console.log("timeout");
+    socket.emit("clearSentence");
+    emitSentence("Previous user timed out, Please add a sentence");
   });
 
   //delete story

@@ -5,8 +5,7 @@ const Form = (props) => {
   const [sentence, setSentence] = useState("");
   const [incSentence, setIncSent] = useState("");
   const [showStoryButton, setStoryButton] = useState(false);
-  const [timerState, setTimerState] = useState(false);
-  const timerRef = useRef(timerState);
+  const timerRef = useRef(false);
 
   const startNewStory = () => {
     socket.emit("start game");
@@ -20,12 +19,11 @@ const Form = (props) => {
       if (timerRef.current === true) {
         socket.emit("timeout");
       }
-    }, 5000);
+    }, 15000);
   };
 
   const postSentence = (type) => {
     timerRef.current = false;
-    console.log(timerRef.current);
     socket.emit("addSentence", sentence);
     setSentence("");
   };
@@ -39,11 +37,6 @@ const Form = (props) => {
   };
 
   useEffect(() => {
-    console.log("effect timerstate", timerState);
-  }, [timerState]);
-
-  useEffect(() => {
-    console.log("useeffect");
     socket.on("recieveSentence", (sentence) => {
       setIncSent(sentence);
       startTimeout();
