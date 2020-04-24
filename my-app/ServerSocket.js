@@ -56,7 +56,6 @@ module.exports.onConnect = (socket, io) => {
 
   //timer listener
   socket.on("timeout", () => {
-    console.log("timeout");
     socket.emit("clearSentence");
     emitSentence("Previous user timed out, Please add a sentence");
   });
@@ -72,12 +71,10 @@ module.exports.onConnect = (socket, io) => {
   socket.on("disconnect", () => {
     //need to redefine i on disconnect
     let socketIDIndex = userKeys.indexOf(socket.id);
-    console.log(socketIDIndex);
     delete users[socket.id];
     userKeys = Object.keys(users);
     if (socketIDIndex < i) {
       i -= 1;
     }
-    console.log("users after logout", Object.keys(users));
   });
 };
