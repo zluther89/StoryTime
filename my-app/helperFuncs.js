@@ -14,6 +14,12 @@ module.exports = {
       });
   },
 
+  sendPic: (socket) => {
+    if (picture) {
+      socket.emit("picture", picture);
+    }
+  },
+
   cleanSentence: (sentence) => {
     if (sentence === "") return;
     while (sentence[sentence.length - 1] === " ") {

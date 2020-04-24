@@ -1,4 +1,4 @@
-const { setPicture, cleanSentence } = require("./helperFuncs");
+const { setPicture, cleanSentence, sendPic } = require("./helperFuncs");
 
 let i = 0;
 let sentenceCount = 0;
@@ -24,18 +24,17 @@ module.exports.onConnect = (socket, io) => {
     users[userKey].emit("recieveSentence", sentence);
   };
 
-  console.log(socket.id);
-
+  //adds users to user object
   users[socket.id] = socket;
-
+  //establishes array of users
   userKeys = Object.keys(users);
-
-  console.log("users", userKeys);
+  //sends pic to a user on login, if one exists
+  sendPic(socket);
 
   socket.on("start game", () => {
     users[userKeys[0]].emit("recieveSentence", "Please start the story!");
     io.emit("start game");
-    // setPicture(io);
+    setPicture(io);
   });
 
   //user add sentence
@@ -73,8 +72,13 @@ module.exports.onConnect = (socket, io) => {
   //user diconnects
   socket.on("disconnect", () => {
     //need to redefine i on disconnect
+    let socketIDIndex = userKeys.indexOf(socket.id);
+    console.log(socketIDIndex);
     delete users[socket.id];
     userKeys = Object.keys(users);
+    if (socketIDIndex < i) {
+      i -= 1;
+    }
     console.log("users after logout", Object.keys(users));
   });
 };
