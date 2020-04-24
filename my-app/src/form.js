@@ -20,7 +20,7 @@ const Form = (props) => {
       if (timerRef.current === true) {
         socket.emit("timeout");
       }
-    }, 15000);
+    }, 500000);
   };
 
   const postSentence = (type) => {
