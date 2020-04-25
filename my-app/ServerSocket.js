@@ -10,12 +10,13 @@ module.exports.onConnect = (socket, io) => {
   //
   const pushStory = () => {
     io.emit("story", story);
+    io.emit("toggleStoryButton");
   };
 
   const enableStoryButton = () => {
     if (sentenceCount >= 5) {
       io.emit("enableShowStory");
-      io.emit("toggleStoryButton");
+      // io.emit("toggleStoryButton");
     }
   };
 
@@ -31,6 +32,18 @@ module.exports.onConnect = (socket, io) => {
   userKeys = Object.keys(users);
   //sends pic to a user on login, if one exists
   sendPic(socket);
+
+  socket.on("disableNewStory", () => {
+    io.emit("disableNewStory");
+  });
+
+  socket.on("disableShowStoryButton", () => {
+    io.emit("disableShowStoryButton");
+  });
+
+  socket.on("enableNewStory", () => {
+    io.emit("enableNewStory");
+  });
 
   socket.on("start game", () => {
     users[userKeys[0]].emit("recieveSentence", "Please start the story!");

@@ -10,6 +10,7 @@ const Form = (props) => {
   const [newStoryButton, setNewStoryButton] = useState(true);
 
   const startNewStory = () => {
+    socket.emit("disableNewStory");
     socket.emit("start game");
     socket.emit("deleteStory");
   };
@@ -27,7 +28,10 @@ const Form = (props) => {
   };
 
   const showStory = () => {
+    // socket.emit("start game");
     socket.emit("showStory");
+    socket.emit("enableNewStory");
+    socket.emit("disableShowStoryButton");
   };
 
   const clearSentence = () => {
@@ -35,13 +39,19 @@ const Form = (props) => {
   };
 
   useEffect(() => {
+    socket.on("disableNewStory", () => {
+      setNewStoryButton(false);
+    });
     socket.on("recieveSentence", (sentence) => {
       setIncSent(sentence);
       startTimeout();
     });
-    socket.on("toggleStoryButton", setNewStoryButton(!newStoryButton));
+    socket.on("enableNewStory", () => {
+      setNewStoryButton(true);
+    });
     socket.on("clearSentence", clearSentence);
     socket.on("enableShowStory", () => setStoryButton(true));
+    socket.on("disableShowStoryButton", () => setStoryButton(false));
   }, []);
 
   return (
@@ -74,11 +84,11 @@ const Form = (props) => {
         </p>
       </div>
       <div className="buttons">
-        {newStoryButton ? null : (
+        {newStoryButton ? (
           <button className="button is-warning" onClick={startNewStory}>
             Start a new story
           </button>
-        )}
+        ) : null}
         {showStoryButton === true ? (
           <button className="button is-success" onClick={showStory}>
             Show Story
