@@ -5,15 +5,16 @@ import Form from "./form";
 function App() {
   const [story, setStory] = useState("");
   const [pictureUrl, setPicture] = useState("");
+  const [userCount, setUserCount] = useState("");
 
   useEffect(() => {
     socket.on("story", (data) => {
       setStory(data);
     });
-
     socket.on("picture", (data) => {
       setPicture(data);
     });
+    socket.on("userCount", (data) => setUserCount(data));
   });
 
   return (
@@ -48,7 +49,7 @@ function App() {
             <Form />
           </div>
         </div>
-        <div className="column is-one-fifth"></div>
+        <div className="column is-one-fifth">Users playing: {userCount}</div>
       </div>
     </div>
   );
