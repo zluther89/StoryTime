@@ -54,7 +54,7 @@ module.exports.onConnect = (socket, io) => {
     users[userKeys[0]].emit("enableSentenceButton");
     io.emit("start game");
     io.emit("toggleStoryButton");
-    // setPicture(io); //TEMP DISABLED
+    setPicture(io);
   });
 
   //user add sentence
