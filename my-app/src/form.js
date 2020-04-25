@@ -8,6 +8,7 @@ const Form = (props) => {
   const [incSentence, setIncSent] = useState("");
   const [showStoryButton, setStoryButton] = useState(false);
   const [newStoryButton, setNewStoryButton] = useState(true);
+  const [sentenceButton, setSentenceButton] = useState(false);
 
   const startNewStory = () => {
     socket.emit("disableNewStory");
@@ -18,7 +19,7 @@ const Form = (props) => {
   const startTimeout = () => {
     timer = setTimeout(() => {
       socket.emit("timeout");
-    }, 15000);
+    }, 20000);
   };
 
   const postSentence = (type) => {
@@ -52,6 +53,8 @@ const Form = (props) => {
     socket.on("clearSentence", clearSentence);
     socket.on("enableShowStory", () => setStoryButton(true));
     socket.on("disableShowStoryButton", () => setStoryButton(false));
+    socket.on("disableSentenceButton", () => setSentenceButton(false));
+    socket.on("enableSentenceButton", () => setSentenceButton(true));
   }, []);
 
   return (
@@ -63,7 +66,7 @@ const Form = (props) => {
             name="sentence"
             value={sentence}
             className="input is-small"
-            placeholder="You have 15 seconds to add to the story!"
+            placeholder="You have 20 seconds to add to the story!"
             onChange={(e) => setSentence(e.target.value)}
           ></input>
         ) : (
@@ -78,9 +81,11 @@ const Form = (props) => {
       </div>
       <div className="field">
         <p class="control">
-          <button className="button is-info" onClick={postSentence}>
-            Submit Sentence
-          </button>
+          {sentenceButton ? (
+            <button className="button is-info" onClick={postSentence}>
+              Submit Sentence
+            </button>
+          ) : null}
         </p>
       </div>
       <div className="buttons">
