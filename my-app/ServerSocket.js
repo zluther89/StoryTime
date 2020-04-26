@@ -76,6 +76,7 @@ module.exports.onConnect = (socket, io) => {
   //timer listener
   socket.on("timeout", () => {
     socket.emit("clearSentence");
+    socket.emit("disableSentenceButton");
     emitSentence("Previous user timed out, Please add a sentence");
   });
 

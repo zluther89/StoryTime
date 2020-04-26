@@ -19,7 +19,7 @@ const Form = (props) => {
   const startTimeout = () => {
     timer = setTimeout(() => {
       socket.emit("timeout");
-    }, 20000);
+    }, 30000);
   };
 
   const postSentence = (type) => {
