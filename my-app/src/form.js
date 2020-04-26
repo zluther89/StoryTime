@@ -66,7 +66,7 @@ const Form = (props) => {
             name="sentence"
             value={sentence}
             className="input is-small"
-            placeholder="You have 20 seconds to add to the story!"
+            placeholder="You have one minute to add to the story!"
             onChange={(e) => setSentence(e.target.value)}
           ></input>
         ) : (
